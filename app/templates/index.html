@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+
+<body>
+
+<!-- button to upload excel file to application-->
+<label id="labelforfileimport" for="excelFile">Get Data with xhttp</label>
+<input id="excelFile" type="file" onchange="return submit_file(this)">
+
+{#<input id="excelFile" type="file" onchange="return on(this)">#}
+
+<!-- clicking this button obtains rectangles from the backend and plots them on the canvas.-->
+<button onclick="plotExcelRectangles();">Plot Excel Data</button>
+
+{#
+ New button for getting rectangles with fetch
+#}
+<button id="fetch">Get Data with fetch</button>
+
+<div ondblclick="resetZoomedPlot();" id="canvaswrapper" style="position:relative; width: 100% ; height: calc( 100vh - 100px ); border: 1px solid red; overflow: hidden;" onmousedown="startZoom(event);">
+    <!-- canvas for plotting the rectangles -->
+    <canvas id="canvas" width="5000" height="5000" style="display: inline-block; width: 100%; height: 100%;"></canvas>
+</div>
+
+{#<script src="https://unpkg.com/axios/dist/axios.min.js"></script>#}
+<script src="{{url_for('static', filename='main/js/submit.js')}}"></script>
+<script src="{{url_for('static', filename='main/js/index.js')}}"></script>
+
+</body>
+</html>
