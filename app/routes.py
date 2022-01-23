@@ -5,6 +5,7 @@ from app import app
 from app import cache
 from sys import getsizeof
 
+
 # This route is called at the start of the application
 @app.route('/', methods=['GET'])
 def start_page():
