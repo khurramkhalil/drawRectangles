@@ -41,6 +41,7 @@ function submit_file(file) {
     }
 }
 
+
 /**
  * some global variables to hold plotting data
  */
