@@ -1,15 +1,37 @@
 import numpy as np
 import pandas as pd
-from flask import render_template, request
+import time
+from flask import render_template, request, jsonify, Response
 from app import app
 from app import cache
 from sys import getsizeof
 
 
+def data_gen():
+    t1 = time.time()
+
+    n_rectangles = 10_000_00
+    canvas_width = 5000  # pixels
+    canvas_height = 5000  # pixels
+    rect_width = 150
+    rect_height = canvas_height / 500
+
+    x_min = np.random.randint(canvas_width - rect_width, size=(n_rectangles))
+    x_max = x_min + rect_width
+    y_min = np.random.randint(canvas_height - rect_height, size=(n_rectangles))
+    y_max = y_min + rect_height
+
+    excel_for_frontend = np.stack((x_min, x_max, y_min, y_max), axis=1)
+
+    print(f'Time taken for data generation {time.time() - t1}')
+    print("Memory size of numpy array in MBs:", round(getsizeof(excel_for_frontend) / 1024 / 1024, 2))
+    set_data(excel_for_frontend)
+
 
 # This route is called at the start of the application
 @app.route('/', methods=['GET'])
 def start_page():
+    data_gen()
     return render_template(
         'index.html',
         title='Plotting from Backend'
@@ -23,25 +45,33 @@ def start_page():
 ######## Data fetch ############
 @app.route('/getdata', methods=['GET', 'POST'])
 def data_get():
-    if request.method == 'POST':  # POST request
-        print(request.get_text())  # parse as text
-        return 'OK', 200
+    if request.form:  # POST request
+        print('POST request!!')  # parse as text
+        # return 'OK', 200
 
-    else:  # GET request
-        n_rectangles = 10_000_00
-        canvasWidth = 5000  # pixels
-        canvasHeight = 5000  # pixels
-        rectWidth = 150
-        rectHeight = canvasHeight / 500
+    if request.files:  # GET request
+        # excel_data = get_data()
 
-        xMin = np.random.randint(canvasWidth - rectWidth, size=(n_rectangles))
-        xMax = xMin + rectWidth
-        yMin = np.random.randint(canvasHeight - rectHeight, size=(n_rectangles))
-        yMax = yMin + rectHeight
+        excelFileFromFrontEnd = pd.read_excel(request.files['mdfExcel']).values
+        dataToList = excelFileFromFrontEnd.tolist()
+        # data_to_send = {'data': dataToList}
+        # return jsonify(excelFileFromFrontEnd.tolist())
+        return jsonify(dataToList)
 
-        excelFileFromFrontEnd = np.stack((xMin, xMax, yMin, yMax), axis=1)
-        print("Memory size of numpy array in MBs:", round(getsizeof(excelFileFromFrontEnd) / 1024 / 1024, 2))
-        return {'data': excelFileFromFrontEnd.tolist()}
+
+# @app.route('/getdata', methods=['GET', 'POST'])
+# def data_get():
+#     if request.method == 'POST':  # POST request
+#         print(request.get_text())  # parse as text
+#         return 'OK', 200
+#
+#     else:  # GET request
+#         excel_data = get_data()
+#
+#         return jsonify(excel_data.tolist())
+        # return {'data': excel_data.tolist()}
+        # return excel_data
+        # return Response(jsonify(excel_data.tolist()))
 
 
 '''
@@ -65,48 +95,29 @@ Xhttp                     fetch
 ######## Data xhttp ############
 @app.route("/upload_mdf", methods=['POST'])
 def upload_mdf():
-    # if request.files:
-    #     excelFileFromFrontEnd = pd.read_excel(request.files['mdfExcel']).values
+    excel_data = get_data()
 
-    n_rectangles = 10_00000
-    canvasWidth = 5000  # pixels
-    canvasHeight = 5000  # pixels
-
-    rectWidth = 150
-    rectHeight = canvasHeight / 500
-
-    xMin = np.random.randint(canvasWidth - rectWidth, size=(n_rectangles))
-    xMax = xMin + rectWidth
-    yMin = np.random.randint(canvasHeight - rectHeight, size=(n_rectangles))
-    yMax = yMin + rectHeight
-
-    excelFileFromFrontEnd = np.stack((xMin, xMax, yMin, yMax), axis=1)
-
-    # memory size of numpy array in bytes
-    print("Memory size of numpy array in MBs:", round(getsizeof(excelFileFromFrontEnd) / 1024 / 1024, 2))
-
-    set_data(excelFileFromFrontEnd)
-
-    return {'data': excelFileFromFrontEnd.tolist()}
+    return {'data': excel_data.tolist()}
 
 
 """ This route return the indices of the rectangles in side the
     coordinates sent by the user from the front end """
 
 
-@app.route("/rects_in_selected_area", methods=['POST'])
-def get_rects_in_selected_area():
-    selectedArea = request.json['selected_area']
-    data = get_data()
-    # sliceMask = (data[:,1] >= selectedArea[0]) & (data[:,0] <= selectedArea[1]) & (data[:,3]
-    # >= selectedArea[2]) & (data[:,2] <= selectedArea[3])
-    sliceMask = np.where(np.logical_and.reduce(
-        [(data[:, 1] >= selectedArea[0]), (data[:, 0] <= selectedArea[1]), (data[:, 3] >= selectedArea[2]),
-         (data[:, 2] <= selectedArea[3])]))
-    return {'indexOfRectsInSelectedArea': sliceMask[0].tolist()}
-
-
-""" cache setters and getters to store and obtain data from the cache"""
+#
+# @app.route("/rects_in_selected_area", methods=['POST'])
+# def get_rects_in_selected_area():
+#     selectedArea = request.json['selected_area']
+#     data = get_data()
+#     # sliceMask = (data[:,1] >= selectedArea[0]) & (data[:,0] <= selectedArea[1]) & (data[:,3]
+#     # >= selectedArea[2]) & (data[:,2] <= selectedArea[3])
+#     sliceMask = np.where(np.logical_and.reduce(
+#         [(data[:, 1] >= selectedArea[0]), (data[:, 0] <= selectedArea[1]), (data[:, 3] >= selectedArea[2]),
+#          (data[:, 2] <= selectedArea[3])]))
+#     return {'indexOfRectsInSelectedArea': sliceMask[0].tolist()}
+#
+#
+# """ cache setters and getters to store and obtain data from the cache"""
 
 
 def set_data(data):
