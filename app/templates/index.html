@@ -6,6 +6,8 @@
 <label id="labelforfileimport" for="excelFile">Get Data with xhttp</label>
 <input id="excelFile" type="file" onchange="return submit_file(this)">
 
+<input id="fetch" type="file" onchange="return fetchText(this)">
+
 {#<input id="excelFile" type="file" onchange="return on(this)">#}
 
 <!-- clicking this button obtains rectangles from the backend and plots them on the canvas.-->
@@ -14,7 +16,7 @@
 {#
  New button for getting rectangles with fetch
 #}
-<button id="fetch">Get Data with fetch</button>
+{#<button id="fetch">Get Data with fetch</button>#}
 
 <div ondblclick="resetZoomedPlot();" id="canvaswrapper"
      style="position:relative; width: 100% ; height: calc( 100vh - 100px ); border: 1px solid red; overflow: hidden;"
