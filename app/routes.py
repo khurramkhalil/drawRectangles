@@ -10,7 +10,7 @@ from sys import getsizeof
 def data_gen():
     t1 = time.time()
 
-    n_rectangles = 10_000_00
+    n_rectangles = 25_600_0
     canvas_width = 5000  # pixels
     canvas_height = 5000  # pixels
     rect_width = 150
@@ -42,21 +42,21 @@ def start_page():
     back to the user """
 
 
-######## Data fetch ############
+####### Data fetch ############
 @app.route('/getdata', methods=['GET', 'POST'])
 def data_get():
-    if request.form:  # POST request
-        print('POST request!!')  # parse as text
-        # return 'OK', 200
+    # if request.method == 'POST':
+    #     print(request.files['mdfExcel'])
+    #     return {}
 
-    if request.files:  # GET request
-        # excel_data = get_data()
+    if request.files:
 
         excelFileFromFrontEnd = pd.read_excel(request.files['mdfExcel']).values
         dataToList = excelFileFromFrontEnd.tolist()
-        # data_to_send = {'data': dataToList}
-        # return jsonify(excelFileFromFrontEnd.tolist())
+    #     data_to_send = {'data': dataToList}
+    #     # return jsonify(excelFileFromFrontEnd.tolist())
         return jsonify(dataToList)
+    #     return data_to_send
 
 
 # @app.route('/getdata', methods=['GET', 'POST'])
@@ -69,10 +69,10 @@ def data_get():
 #         excel_data = get_data()
 #
 #         return jsonify(excel_data.tolist())
-        # return {'data': excel_data.tolist()}
-        # return excel_data
-        # return Response(jsonify(excel_data.tolist()))
-
+#         # return {'data': excel_data.tolist()}
+#         # return excel_data
+#         # return Response(jsonify(excel_data.tolist()))
+#
 
 '''
 
@@ -95,9 +95,13 @@ Xhttp                     fetch
 ######## Data xhttp ############
 @app.route("/upload_mdf", methods=['POST'])
 def upload_mdf():
-    excel_data = get_data()
+    if request.form:
+        print('POST request!!')
 
-    return {'data': excel_data.tolist()}
+    if request.files:
+        excel_frontend = pd.read_excel(request.files['mdfExcel']).values
+
+        return {'data': excel_frontend.tolist()}
 
 
 """ This route return the indices of the rectangles in side the
