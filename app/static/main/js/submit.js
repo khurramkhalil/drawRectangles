@@ -5,7 +5,6 @@ let excel;
 
 
 async function fetchText(file) {
-    // console.log("Time begins")
     // console.time("Rectangle Transmit Time: ")
 
     let excelData = new FormData();

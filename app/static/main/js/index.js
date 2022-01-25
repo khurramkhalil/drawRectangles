@@ -17,6 +17,7 @@ const yAxisResolution = canvas.height / viewPortHeight;
 
 /**
  * this function sends the uploaded excel file to the server for processing
+ *
  */
 function submit_file(file) {
     if (file) {

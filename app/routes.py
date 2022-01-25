@@ -50,11 +50,10 @@ def data_get():
     #     return {}
 
     if request.files:
-
         excelFileFromFrontEnd = pd.read_excel(request.files['mdfExcel']).values
         dataToList = excelFileFromFrontEnd.tolist()
-    #     data_to_send = {'data': dataToList}
-    #     # return jsonify(excelFileFromFrontEnd.tolist())
+        #     data_to_send = {'data': dataToList}
+        #     # return jsonify(excelFileFromFrontEnd.tolist())
         return jsonify(dataToList)
     #     return data_to_send
 
@@ -72,7 +71,7 @@ def data_get():
 #         # return {'data': excel_data.tolist()}
 #         # return excel_data
 #         # return Response(jsonify(excel_data.tolist()))
-#
+
 
 '''
 
