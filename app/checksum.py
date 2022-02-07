@@ -16,7 +16,13 @@ def checksum(filename, parent=None):
 
         # If
         if not os.path.exists("tree.json"):
-            # label = subprocess.check_output(["git", "branch", "--show-current"]).strip().decode()
+            label = subprocess.check_output(["git", "branch", "--show-current"]).strip().decode()
+
+            if label == 'master':
+                var = subprocess.run(["git", "checkout", "-b", "1"], check=True, stdout=subprocess.PIPE).stdout
+                var = subprocess.check_output(["git", "branch", "--show-current"]).strip().decode()
+                assert var == '1'
+
             names = {md5_parent: '1'}
             with open("names.json", "w") as file1, open("tree.json", "w") as file2:
                 json.dump(names, file1)
@@ -31,13 +37,13 @@ def checksum(filename, parent=None):
 
             # Finally, compare original MD5 with freshly calculated
             if md5_parent in record:
-                # suggest_branch = str(record[md5_parent])
-                # curr_branch = subprocess.check_output(["git", "branch", "--show-current"]).strip().decode()
-                #
-                # if not suggest_branch == curr_branch:
-                #     subprocess.check_output(["git", "checkout", f"{suggest_branch}"])
-                #     print("MD5 verified.")
-                pass
+                suggest_branch = str(record[md5_parent])
+                curr_branch = subprocess.check_output(["git", "branch", "--show-current"]).strip().decode()
+
+                if not suggest_branch == curr_branch:
+                    subprocess.check_output(["git", "checkout", f"{suggest_branch}"])
+                    print("MD5 verified.")
+                # pass
 
             print(md5_parent)
             print("MD5 verification failed!.")
