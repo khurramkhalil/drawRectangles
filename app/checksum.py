@@ -145,5 +145,3 @@ def checksum(filename, parent=None):
         net.add_edge(md5_parent, md5_child)
 
         nx.write_gpickle(net, "network.gpickle")
-
-        pass
