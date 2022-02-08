@@ -7,7 +7,6 @@ import networkx as nx
 
 
 def checksum(filename, parent=None):
-
     dvc_dir = os.getcwd() + '\\data\\raw'
 
     if not parent:
@@ -45,7 +44,9 @@ def checksum(filename, parent=None):
 
                 # now add files to dvc
                 dvc_add = subprocess.run(["dvc", "add", "./data/raw"], check=True, stdout=subprocess.PIPE).stdout
-                git_add = subprocess.run(["git", "add", "--all"], check=True, stdout=subprocess.PIPE).stdout
+                git_add = subprocess.run(["git", "add", "./data/raw.dvc", "./data/.gitignore"], check=True,
+                                         stdout=subprocess.PIPE).stdout
+                # git_add = subprocess.run(["git", "add", "--all"], check=True, stdout=subprocess.PIPE).stdout
                 git_commit = subprocess.run(["git", "commit", "-m", "1"], check=True, stdout=subprocess.PIPE).stdout
                 git_push = subprocess.run(["git", "push"], check=True, stdout=subprocess.PIPE).stdout
                 dvc_push = subprocess.run(["dvc", "push"], check=True, stdout=subprocess.PIPE).stdout
